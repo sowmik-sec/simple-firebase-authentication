@@ -2,6 +2,7 @@ import "./App.css";
 import { app } from "./firebase/firebase.init";
 import {
   getAuth,
+  GithubAuthProvider,
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
@@ -13,7 +14,7 @@ const auth = getAuth(app);
 function App() {
   const [user, setUser] = useState({});
   const googleProvider = new GoogleAuthProvider();
-  const githubProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
   const handleGoogleSignIn = () => {
     signInWithPopup(auth, googleProvider)
       .then((result) => {
