@@ -1,17 +1,66 @@
 import "./App.css";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { app } from "./firebase/firebase.init";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
+import { useState } from "react";
 
 const auth = getAuth(app);
 
 function App() {
-  const provider = new GoogleAuthProvider();
+  const [user, setUser] = useState({});
+  const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GoogleAuthProvider();
   const handleGoogleSignIn = () => {
-    console.log("google authentication");
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+      });
+  };
+  const handleGithubSignIn = () => {
+    signInWithPopup(auth, githubProvider)
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+        console.log(user);
+      })
+      .catch((error) => {
+        console.error("error: ", error);
+      });
+  };
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        setUser({});
+      })
+      .catch(() => {
+        setUser({});
+      });
   };
   return (
     <div className="App">
-      <button onClick={handleGoogleSignIn}>Google Sign In</button>
+      {user.displayName ? (
+        <button onClick={handleSignOut}>Sign out</button>
+      ) : (
+        <>
+          <button onClick={handleGoogleSignIn}>Google Sign In</button>
+          <button onClick={handleGithubSignIn}>Github Sign In</button>
+        </>
+      )}
+      {user.uid && (
+        <div>
+          <h3>User name: {user.displayName}</h3>
+          <p>Email Address: {user.email}</p>
+        </div>
+      )}
     </div>
   );
 }
